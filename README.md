@@ -1,10 +1,11 @@
 # pegasus-glidein - a simple HTCondor glidein for HPC systems
 
-This is a simple script to start HTCondor glideins on HPC systems. Users will
-start Slurm jobs under their own allocation. The jobs will start a HTCondor
-execution point instance, which will connect back to a HTCondor central
-manager, and start running jobs. Once there are no more jobs, the glidein
-will exit.
+This is a sample script which can be used to show how to quickly set
+up HTCondor pool overlays on top of other compute resources. A common
+use case is having your own submit host, with HTCondor installed and
+configured as a central manager, and then submitting jobs to a campus
+cluster, with the jobs executing this script. The compute nodes will be
+registered into your central manager as HTCondor compute nodes.
 
 
 ## Quickstart
@@ -43,6 +44,16 @@ Sample Slurm job:
       -h HOURS  Number of hours to accept new jobs (defaults to 12)
       -w PATH   Use PATH as work directory. If not specified, \$TMP is used.
       -u URL    URL to a HTCondor tarball, if you do not want the default.
+
+
+## Whole vs shared nodes / Walltime
+
+The jobs should preferably be whole node jobs, with a wall time matching
+the glidein and the user workload. For example, if the workload has jobs
+that are a maximum 10 hours long, you can submit a job with a 24 hour
+walltime, with a glidein with -t 14. The glidein will accept jobs for
+14 hours, and will then allow any jobs to finish for the maximum of 10
+hours.
 
 
 ## Generate tokens

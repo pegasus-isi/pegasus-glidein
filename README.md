@@ -11,7 +11,7 @@ will exit.
 
 To start the glidein on a general host (for example, a cloud instance):
 
-    $ curl -O pegasus-glidein https://download.pegasus.isi.edu/glidein/pegasus-glidein
+    $ curl -O pegasus-glidein https://raw.githubusercontent.com/pegasus-isi/pegasus-glidein/main/pegasus-glidein
     $ chmod a+x pegasus-glidein
     $ ./pegasus-glidein -c pegasus.access-ci.org \\
                         -t mytoken \\
@@ -25,7 +25,7 @@ Sample Slurm job:
     #SBATCH --ntasks=4
     #SBATCH --time=24:00:00
     
-    curl -O pegasus-glidein https://download.pegasus.isi.edu/glidein/pegasus-glidein
+    curl -O pegasus-glidein https://raw.githubusercontent.com/pegasus-isi/pegasus-glidein/main/pegasus-glidein
     chmod a+x pegasus-glidein
     ./pegasus-glidein -c pegasus.access-ci.org \
                       -t mytoken \

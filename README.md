@@ -12,7 +12,7 @@ registered into your central manager as HTCondor compute nodes.
 
 To start the glidein on a general host (for example, a cloud instance):
 
-    $ curl -O pegasus-glidein https://raw.githubusercontent.com/pegasus-isi/pegasus-glidein/main/pegasus-glidein
+    $ curl -o pegasus-glidein https://raw.githubusercontent.com/pegasus-isi/pegasus-glidein/main/pegasus-glidein
     $ chmod a+x pegasus-glidein
     $ ./pegasus-glidein -c pegasus.access-ci.org \\
                         -t mytoken \\
@@ -23,14 +23,30 @@ Sample Slurm job:
     #!/bin/bash
     #
     #SBATCH --job-name=glidein
-    #SBATCH --ntasks=4
+    #SBATCH --cpus-per-task=10
     #SBATCH --time=24:00:00
     
-    curl -O pegasus-glidein https://raw.githubusercontent.com/pegasus-isi/pegasus-glidein/main/pegasus-glidein
+    curl -o pegasus-glidein https://raw.githubusercontent.com/pegasus-isi/pegasus-glidein/main/pegasus-glidein
     chmod a+x pegasus-glidein
     ./pegasus-glidein -c pegasus.access-ci.org \
                       -t mytoken \
                       -s 'RemoteOwner == "myusername"'
+
+To run larger glideins, across multiple nodes:
+
+    #!/bin/bash
+    #
+    #SBATCH --job-name=glidein
+    #SBATCH --nodes=4
+    #SBATCH --ntasks-per-node=1
+    #SBATCH --cpus-per-task=10
+    #SBATCH --time=24:00:00
+    
+    curl -o pegasus-glidein https://raw.githubusercontent.com/pegasus-isi/pegasus-glidein/main/pegasus-glidein
+    chmod a+x pegasus-glidein
+    srun ./pegasus-glidein -c pegasus.access-ci.org \
+                           -t mytoken \
+                           -s 'RemoteOwner == "myusername"'
 
 
 ## Usage
@@ -41,7 +57,7 @@ Sample Slurm job:
       -c HOST   The hostname of the HTCondor central manager.
       -t TOKEN  The HTCondor token used for authentication.
       -s START  Start expression for the STARTD.
-      -h HOURS  Number of hours to accept new jobs (defaults to 12)
+      -r HOURS  Number of hours to accept new jobs (defaults to 12)
       -w PATH   Use PATH as work directory. If not specified, \$TMP is used.
       -u URL    URL to a HTCondor tarball, if you do not want the default.
 

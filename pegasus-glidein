@@ -46,7 +46,7 @@ function cleanup()
 
 START_EXPR="True"
 HOURS_UNTIL_RETIREMENT=12
-CONDOR_TARBALL="https://research.cs.wisc.edu/htcondor/tarball/current/23.9.6/release/condor-23.9.6-x86_64_AlmaLinux8-stripped.tar.gz"
+CONDOR_TARBALL="https://research.cs.wisc.edu/htcondor/tarball/current/current/condor-x86_64_AlmaLinux8-stripped.tar.gz"
 
 
 #######################################################################
@@ -54,7 +54,7 @@ CONDOR_TARBALL="https://research.cs.wisc.edu/htcondor/tarball/current/23.9.6/rel
 #  main
 # 
 
-while getopts "hc:t:s:h:w:u:" arg; do
+while getopts "hc:t:s:r:w:u:" arg; do
     case $arg in
         h)
             usage
@@ -68,7 +68,7 @@ while getopts "hc:t:s:h:w:u:" arg; do
         s)
             START_EXPR=$OPTARG
             ;;
-        h)
+        r)
             HOURS_UNTIL_RETIREMENT=$OPTARG
             ;;
         w)
@@ -107,6 +107,8 @@ if [ "x$WORK_DIR" == "x" ]; then
     else
         WORK_DIR=$TMP
     fi
+else
+    mkdir -p $WORK_DIR
 fi
 WORK_DIR=`mktemp -d $WORK_DIR/htcondor-local.XXXXXXXX`
 echo "Work dir is $WORK_DIR"
@@ -176,7 +178,10 @@ EOF
 
 # handle SLURM_NTASKS/OMP_NUM_THREADS
 TOTAL_CORES=$(cat /proc/cpuinfo | egrep '^processor' | wc -l)
-if [ "x$SLURM_NTASKS" != "x" ]; then
+if [ "x$SLURM_CPUS_PER_TASK" != "x" ]; then
+    echo "NUM_CPUS = $SLURM_CPUS_PER_TASK" >>$CONDOR_CONFIG
+    echo "SLOT_TYPE_1 = cpus=$SLURM_CPUS_PER_TASK, memory=$SLURM_CPUS_PER_TASK/$TOTAL_CORES, disk=$SLURM_CPUS_PER_TASK/$TOTAL_CORES, swap=$SLURM_CPUS_PER_TASK/$TOTAL_CORES" >>$CONDOR_CONFIG
+elif [ "x$SLURM_NTASKS" != "x" ]; then
     echo "NUM_CPUS = $SLURM_NTASKS" >>$CONDOR_CONFIG
     echo "SLOT_TYPE_1 = cpus=$SLURM_NTASKS, memory=$SLURM_NTASKS/$TOTAL_CORES, disk=$SLURM_NTASKS/$TOTAL_CORES, swap=$SLURM_NTASKS/$TOTAL_CORES" >>$CONDOR_CONFIG
 fi
@@ -187,6 +192,11 @@ echo "$TOKEN" >$WORK_DIR/condor/etc/condor/tokens.d/glidein.token
 chmod 600 $WORK_DIR/condor/etc/condor/tokens.d/glidein.token
 condor_token_list
 
+echo
+echo "My HTCondor config is:"
+cat $CONDOR_CONFIG
+
+echo
 echo "Starting HTCondor..."
 
 touch $_CONDOR_LOCAL_DIR/log/MasterLog $_CONDOR_LOCAL_DIR/log/StartLog

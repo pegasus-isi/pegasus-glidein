@@ -16,7 +16,7 @@ To start the glidein on a general host (for example, a cloud instance):
     $ chmod a+x pegasus-glidein
     $ ./pegasus-glidein -c pegasus.access-ci.org \\
                         -t mytoken \\
-                        -s 'RemoteOwner == "myusername"'
+                        -s 'Owner == "myusername"'
 
 Sample Slurm job:
 
@@ -30,7 +30,7 @@ Sample Slurm job:
     chmod a+x pegasus-glidein
     ./pegasus-glidein -c pegasus.access-ci.org \
                       -t mytoken \
-                      -s 'RemoteOwner == "myusername"'
+                      -s 'Owner == "myusername"'
 
 To run larger glideins, across multiple nodes:
 
@@ -46,7 +46,7 @@ To run larger glideins, across multiple nodes:
     chmod a+x pegasus-glidein
     srun ./pegasus-glidein -c pegasus.access-ci.org \
                            -t mytoken \
-                           -s 'RemoteOwner == "myusername"'
+                           -s 'Owner == "myusername"'
 
 
 ## Usage

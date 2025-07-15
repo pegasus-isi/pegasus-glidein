@@ -162,8 +162,9 @@ SEC_DEFAULT_AUTHENTICATION_METHODS = FS, IDTOKEN
 
 SEC_TOKEN_DIRECTORY = $WORK_DIR/condor/etc/condor/tokens.d 
 
+use feature : GPUs
 # dynamic slots
-SLOT_TYPE_1 = cpus=100%, memory=100%, disk=100%, swap=100%
+SLOT_TYPE_1 = cpus=100%, gpus=100%, memory=100%, disk=100%, swap=100%
 SLOT_TYPE_1_PARTITIONABLE = TRUE
 NUM_SLOTS = 1
 NUM_SLOTS_TYPE_1 = 1

@@ -49,6 +49,28 @@ HOURS_UNTIL_RETIREMENT=12
 CONDOR_TARBALL="https://research.cs.wisc.edu/htcondor/tarball/current/current/condor-x86_64_AlmaLinux8-stripped.tar.gz"
 
 
+download_condor_tarball() {
+    # Extract ID and VERSION_ID safely from /etc/os-release
+    local osname osversion
+    osname=$(awk -F= '/^ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
+    osversion=$(awk -F= '/^VERSION_ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
+
+    # Normalize OS names
+    case "$osname" in
+        debian) osname="Debian" ;;
+        rhel|centos|rocky|almalinux|scientific) osname="AlmaLinux" ;;
+        sles|opensuse-leap) osname="openSUSE" ;;
+        *) ;; # leave osname as-is
+    esac
+
+    # Build the tarball URL
+    CONDOR_TARBALL="https://research.cs.wisc.edu/htcondor/tarball/current/current/condor-x86_64_${osname}${osversion}-stripped.tar.gz"
+    wget -q -O condor.tar.gz $CONDOR_TARBALL
+    tar xzf condor.tar.gz
+    rm -f condor.tar.gz
+    mv condor-* condor
+}
+
 #######################################################################
 #
 #  main
@@ -117,13 +139,11 @@ cd $WORK_DIR
 
 # download HTCondor
 echo "Downloading and setting up HTCondor..."
-wget -q -O condor.tar.gz $CONDOR_TARBALL
-tar xzf condor.tar.gz
-rm -f condor.tar.gz
-mv condor-* condor
+download_condor_tarball
 
 export _CONDOR_RELEASE_DIR=$WORK_DIR/condor
 export PATH=$_CONDOR_RELEASE_DIR/bin:$_CONDOR_RELEASE_DIR/sbin:$PATH
+export LD_LIBRARY_PATH=$_CONDOR_RELEASE_DIR/lib:$LD_LIBRARY_PATH
 
 # temp directory for this instance
 export _CONDOR_LOCAL_DIR="$WORK_DIR/var"

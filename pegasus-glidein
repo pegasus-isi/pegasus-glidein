@@ -157,6 +157,15 @@ mkdir -p $_CONDOR_LOCAL_DIR/execute
 mkdir -p $_CONDOR_LOCAL_DIR/log
 mkdir -p $_CONDOR_LOCAL_DIR/spool
 
+# job wrapper
+cat >$_CONDOR_RELEASE_DIR/bin/job-wrapper.sh << EOF
+#!/bin/bash
+# use a job wrapper to expose some environment from the glidein to the job
+export PATH="$PATH"
+exec "\$@"
+EOF
+chmod 755 $_CONDOR_RELEASE_DIR/bin/job-wrapper.sh
+
 # condor config
 export CONDOR_CONFIG=$WORK_DIR/condor/etc/condor_config
 export MY_HOSTNAME=`hostname -f`
@@ -195,6 +204,8 @@ SUSPEND = False
 CONTINUE = True
 PREEMPT = False
 KILL = False
+
+USER_JOB_WRAPPER = $_CONDOR_RELEASE_DIR/bin/job-wrapper.sh
 EOF
 
 # handle SLURM_NTASKS/OMP_NUM_THREADS

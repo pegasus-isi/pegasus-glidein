@@ -212,7 +212,14 @@ EOF
 TOTAL_CORES=$(cat /proc/cpuinfo | egrep '^processor' | wc -l)
 if [ "x$SLURM_CPUS_PER_TASK" != "x" ]; then
     echo "NUM_CPUS = $SLURM_CPUS_PER_TASK" >>$CONDOR_CONFIG
-    echo "SLOT_TYPE_1 = cpus=$SLURM_CPUS_PER_TASK, memory=$SLURM_CPUS_PER_TASK/$TOTAL_CORES, disk=$SLURM_CPUS_PER_TASK/$TOTAL_CORES, swap=$SLURM_CPUS_PER_TASK/$TOTAL_CORES" >>$CONDOR_CONFIG
+
+    # calculate memory based on the available information
+    MEM="$SLURM_CPUS_PER_TASK/$TOTAL_CORES"
+    if [ "x$SLURM_MEM_PER_CPU" != "x" ]; then
+        MEM=$(( $SLURM_CPUS_PER_TASK * $SLURM_MEM_PER_CPU ))
+    fi
+
+    echo "SLOT_TYPE_1 = cpus=$SLURM_CPUS_PER_TASK, memory=$MEM, disk=$SLURM_CPUS_PER_TASK/$TOTAL_CORES, swap=$SLURM_CPUS_PER_TASK/$TOTAL_CORES" >>$CONDOR_CONFIG
 elif [ "x$SLURM_NTASKS" != "x" ]; then
     echo "NUM_CPUS = $SLURM_NTASKS" >>$CONDOR_CONFIG
     echo "SLOT_TYPE_1 = cpus=$SLURM_NTASKS, memory=$SLURM_NTASKS/$TOTAL_CORES, disk=$SLURM_NTASKS/$TOTAL_CORES, swap=$SLURM_NTASKS/$TOTAL_CORES" >>$CONDOR_CONFIG

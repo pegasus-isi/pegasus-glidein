@@ -64,7 +64,7 @@ download_condor_tarball() {
     esac
 
     # Build the tarball URL
-    CONDOR_TARBALL="https://research.cs.wisc.edu/htcondor/tarball/current/current/condor-x86_64_${osname}${osversion}-stripped.tar.gz"
+    CONDOR_TARBALL="https://htcss-downloads.chtc.wisc.edu/tarball/25.x/current/condor-x86_64_${osname}${osversion}-stripped.tar.gz"
     wget -nv -O condor.tar.gz $CONDOR_TARBALL
     tar xzf condor.tar.gz
     rm -f condor.tar.gz
